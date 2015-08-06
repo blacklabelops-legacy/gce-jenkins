@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gce-jenkins-pod
+  labels:
+    name: gce-jenkins-pod
+spec:
+  containers:
+    - name: gce-jenkins
+      image: docker.io/blacklabelops/jenkins
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          targetPort: 8080
+  restartPolicy: Always
+  dnsPolicy: Default

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gce-jenkins-pod
+  labels:
+    name: gce-jenkins-pod
+spec:
+  containers:
+    - name: gce-jenkins
+      image: docker.io/blacklabelops/jenkins:latest
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          name: jenkins-https
+        - containerPort: 50000
+          name: jenkins-slave
+      env:
+        - name: JENKINS_ADMIN_USER
+          value: jenkins
+        - name: JENKINS_ADMIN_PASSWORD
+          value: swordfish
+        - name: JENKINS_PLUGINS
+          value: git hipchat swarm
+        - name: JENKINS_SLAVEPORT
+          value: "50000"
+        - name: JAVA_VM_PARAMETERS
+          value: -Xmx1024m -Xms256m
+        - name: JENKINS_KEYSTORE_PASSWORD
+          value: keystoreswordfish
+        - name: JENKINS_CERTIFICATE_DNAME
+          value: CN=JenkinsTutorial,OU=Blacklabelops,O=blacklabelops.net,L=Munich,S=Bavaria,C=DE
+      volumeMounts:
+        - name: jenkins-master-persistent-storage
+          mountPath: /jenkins
+  volumes:
+      - name: jenkins-master-persistent-storage
+        gcePersistentDisk:
+          pdName: gce-jenkins-disk
+          fsType: ext4
+  restartPolicy: Always
+  dnsPolicy: Default
